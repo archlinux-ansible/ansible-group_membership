@@ -1,0 +1,5 @@
+---
+
+- name: Add groups
+  include_tasks: groups.yaml
+  loop: "{{ group_membership }}"

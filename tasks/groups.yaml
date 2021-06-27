@@ -1,0 +1,22 @@
+---
+
+- name: Get username & groups
+  set_fact:
+    group_membership__user: "{{ (item.keys() | list)[0] }}"
+    group_membership__groups: "{{ (item.values() | list)[0] }}"
+
+- name: Check if user exists
+  getent:
+    database: passwd
+    key: "{{ group_membership__user }}"
+  # Do not fail if group_membership__user doesn't exist
+  # We will check if the var is defined
+  # And not set group_membership__groups if not
+  failed_when: no
+
+- name: "Set groups for {{ group_membership__user }}"
+  user:
+    name: "{{ group_membership__user }}"
+    groups: "{{ group_membership__groups }}"
+  when:
+    - getent_passwd is defined
